@@ -58,6 +58,12 @@ Environment files live at the project root and are backed by example templates i
 
 The real `.env.postgres.local` and `.env.postgres.remote` files are ignored via [.gitignore](.gitignore) and will not be committed.
 
+### Why Local vs Remote Postgres?
+
+- **Local Postgres (`.env.postgres.local`)** runs a Postgres container on your laptop and stores all n8n state under `$HOME/.n8n/postgres`. This is ideal for quick, disposable experimentation.
+- **Remote Postgres (`.env.postgres.remote`)** keeps the n8n containers local but points them at a Postgres instance running elsewhere (e.g., a GCP VM). This decouples long‑lived state (users, workflows, credentials, executions) from this quick‑start repo and from your local Docker volume.
+- The repo is intentionally limited to **runtime config + examples**. Actual secrets and live DB endpoints live only in your untracked `.env.postgres.*` files.
+
 ## Exporting Workflows for Version Control
 - In the n8n UI: open a workflow → “Export” → save the `.json` file into `workflows/`.
 - Commit those JSON files to git so you can track changes.
@@ -65,6 +71,7 @@ The real `.env.postgres.local` and `.env.postgres.remote` files are ignored via 
 ## Troubleshooting
 - If `http://localhost:5678` doesn’t load, ensure Docker Desktop is running and retry `make up`.
 - To reset local state, you can remove or rename `$HOME/.n8n` (this deletes local n8n data). Alternatively stop with `make down` and back up that folder.
+- If you forget the n8n owner password, you can safely reset it without losing workflows/credentials by running `make n8n-shell` and then `n8n user-management:reset` inside the container, and following the prompts.
 
 ## Future: Remote DB / Cloud Run
 - When ready to extend beyond the local/remote Postgres setups above, you can use `terraform/` to provision GCP resources (VM for Postgres, Secret Manager, VPC connector, Cloud Run service, etc.).
